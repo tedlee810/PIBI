@@ -8,25 +8,24 @@ pygame.init()
 
 # create game window
 game = pygame.display.set_mode((1280, 720))
-pygame.display.set_caption('Pythonmon Battle Simulator')
+pygame.display.set_caption('Python Monsters Battle Simulator')
 
 # colors
 black = (0, 0, 0)
 white = (255, 255, 255)
 
+iv = {'hp': 31, 'attack': 24, 'defense': 10, 'special-attack': 20, 'special-defense': 10, 'speed': 3}
+ev = {'hp': 0, 'attack': 0, 'defense': 0, 'special-attack': 0, 'special-defense': 0, 'speed': 0}
+
 # create Pokémon
 ## name, level, nature, iv, ev, x_pos, y_pos
-iv = (31, 24, 10, 20, 10, 3)
-ev = (0, 0, 0, 0, 0, 0, 0)
-
 lapras = Pokemon('Lapras', 25, 'hasty', iv, ev, 100, 100)
 lucario = Pokemon('Lucario', 20, 'modest', iv, ev, 150, 400)
-monferno = Pokemon('Monferno', 20, 'jolly', iv, ev, 200, 300)
 bulbasaur = Pokemon('Bulbasaur', 20, 'docile', iv, ev, 250, 500)
-eevee = Pokemon("Eevee", 20, 'quiet', iv, ev, 200, 400)
+eevee = Pokemon('Eevee', 20, 'quiet', iv, ev, 200, 400)
 
 player_team = [lapras, bulbasaur]
-rival_team = [lucario, monferno]
+rival_team = [lucario, eevee]
 
 def draw(self, alpha=255):
     sprite = self.image.copy()
@@ -37,21 +36,26 @@ def draw(self, alpha=255):
 # game loop
 game_status = 'select'
 game.fill(white)
-draw(lapras)
-draw(lucario)
-draw(monferno)
-draw(bulbasaur)
-draw(eevee)
 
 pygame.display.update()
 
 while game_status != 'quit':
     for event in pygame.event.get():
-        # quit action
+        # QUIT ACTION
         if event.type == QUIT:
             game_status = 'quit'
         
-        # click action
+        # KEY ACTION
+        if event.type == KEYDOWN:
+            if event.key == K_y:
+                lapras = Pokemon('Lapras', 25, 'hasty', iv, ev, 100, 100)
+                lucario = Pokemon('Lucario', 20, 'modest', iv, ev, 150, 400)
+                bulbasaur = Pokemon('Bulbasaur', 20, 'docile', iv, ev, 250, 500)
+                eevee = Pokemon('Eevee', 20, 'quiet', iv, ev, 200, 400)
+            elif event.key == K_n:
+                game_status == 'quit'
+        
+        # CLICK ACTION
         '''if event.type == MOUSEBUTTONDOWN:
             mouse_click = event.pos # position of mouse click
             if game_status == 'select':

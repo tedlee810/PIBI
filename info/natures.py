@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-nature_chart = np.array([['','attack','defense','sp_atk','sp_def','speed'],
+nature_chart = np.array([['','attack','defense','special-attack','special-defense','speed'],
                          ['hardy',1,1,1,1,1],
                          ['lonely',1.1,0.9,1,1,1],
                          ['brave',1.1,1,1,1,0.9],
