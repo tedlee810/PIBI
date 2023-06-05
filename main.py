@@ -1,8 +1,7 @@
 import pygame
-from pygame.locals import *
+import pygame.locals
 
-from info.pokemon import Pokemon as Pokemon
-from info.typechart import type_chart as type_chart
+from info.pokemon import Pokemon
 
 pygame.init()
 
@@ -11,49 +10,62 @@ game = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption('Python Monsters Battle Simulator')
 
 # colors
-black = (0, 0, 0)
-white = (255, 255, 255)
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 
-iv = {'hp': 31, 'attack': 24, 'defense': 10, 'special-attack': 20, 'special-defense': 10, 'speed': 3}
-ev = {'hp': 0, 'attack': 0, 'defense': 0, 'special-attack': 0, 'special-defense': 0, 'speed': 0}
+# constants
+IV = {'hp': 31, 'attack': 24, 'defense': 10, 'special-attack': 20, 'special-defense': 10, 'speed': 3}
+EV = {'hp': 0, 'attack': 0, 'defense': 0, 'special-attack': 0, 'special-defense': 0, 'speed': 0}
+LEVEL = 50
 
 # create Pokémon
-## name, level, nature, iv, ev, x_pos, y_pos
-lapras = Pokemon('Lapras', 25, 'hasty', iv, ev, 100, 100)
-lucario = Pokemon('Lucario', 20, 'modest', iv, ev, 150, 400)
-bulbasaur = Pokemon('Bulbasaur', 20, 'docile', iv, ev, 250, 500)
-eevee = Pokemon('Eevee', 20, 'quiet', iv, ev, 200, 400)
+## name, level, nature, iv, ev, is_player
+lapras = Pokemon('Lapras', LEVEL, 'hasty', IV, EV, True)
+lucario = Pokemon('Lucario', LEVEL, 'modest', IV, EV, True)
+bulbasaur = Pokemon('Bulbasaur', LEVEL, 'docile', IV, EV, False)
+eevee = Pokemon('Eevee', LEVEL, 'quiet', IV, EV, False)
 
-player_team = [lapras, bulbasaur]
-rival_team = [lucario, eevee]
+player_team = [lapras, lucario]
+rival_team = [bulbasaur, eevee]
 
-def draw(self, alpha=255):
-    sprite = self.image.copy()
-    transparency = (255, 255, 255, alpha)
-    sprite.fill(transparency, None, pygame.BLEND_RGBA_MULT)
-    game.blit(sprite, (self.x_pos, self.y_pos))
+def display_message(message):
+    # draw a white box with black border
+    pygame.draw.rect(game, WHITE, (10, 350, 480, 140))
+    pygame.draw.rect(game, BLACK, (10, 350, 480, 140), 3)
+    
+    # display the message
+    font = pygame.font.Font(pygame.font.get_default_font(), 20)
+    text = font.render(message, True, BLACK)
+    text_rect = text.get_rect()
+    text_rect.x = 30
+    text_rect.y = 410
+    game.blit(text, text_rect)
+    
+    pygame.display.update()
 
 # game loop
 game_status = 'select'
-game.fill(white)
+
+game.fill(WHITE)
+lapras.draw(game)
+lucario.draw(game)
+bulbasaur.draw(game)
+eevee.draw(game)
+display_message('Lapras!') 
+
+lapras.print_moves()
 
 pygame.display.update()
 
 while game_status != 'quit':
     for event in pygame.event.get():
         # QUIT ACTION
-        if event.type == QUIT:
+        if event.type == pygame.QUIT:
             game_status = 'quit'
         
         # KEY ACTION
-        if event.type == KEYDOWN:
-            if event.key == K_y:
-                lapras = Pokemon('Lapras', 25, 'hasty', iv, ev, 100, 100)
-                lucario = Pokemon('Lucario', 20, 'modest', iv, ev, 150, 400)
-                bulbasaur = Pokemon('Bulbasaur', 20, 'docile', iv, ev, 250, 500)
-                eevee = Pokemon('Eevee', 20, 'quiet', iv, ev, 200, 400)
-            elif event.key == K_n:
-                game_status == 'quit'
+        if event.type == pygame.KEYDOWN:
+            pass
         
         # CLICK ACTION
         '''if event.type == MOUSEBUTTONDOWN:
