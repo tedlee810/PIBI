@@ -33,5 +33,5 @@ nature_chart = pd.DataFrame(data=nature_chart[1:,1:],
                             index=nature_chart[1:,0],
                             columns=nature_chart[0,1:])
 
-# print(nature_chart)
-# print(nature_chart.loc['jolly','speed'])
+# USAGE:
+# print(nature_chart.loc['jolly','speed']) SHOULD print out 1.1

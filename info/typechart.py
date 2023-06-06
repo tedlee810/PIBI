@@ -27,13 +27,11 @@ type_chart = np.array([['','bug','dark','dragon','electric','fairy','fighting','
                        ])
 
 type_chart = pd.DataFrame(data=type_chart[1:,1:],
-                     index=type_chart[1:,0],
-                     columns=type_chart[0,1:])
+                          index=type_chart[1:,0],
+                          columns=type_chart[0,1:])
 
 # transpose source type chart to make calculating types more intuitive (e.g., type_chart.loc['offensive','defensive'])
 type_chart = type_chart.T
 
-# print(type_chart)
-
-# test statement
-# print('rock against steel is: ' + type_chart.loc['rock','steel'])
+# USAGE:
+# print('rock against steel is: ' + type_chart.loc['rock','steel']) SHOULD print out 0.5

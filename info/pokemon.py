@@ -1,13 +1,14 @@
 import pygame
 import pygame.locals
 import math
-from collections import namedtuple
 import requests
 from urllib.request import urlopen
 import io
 
 from info.move import Move
 from info.natures import nature_chart
+
+VERSION = 'ultra-sun-ultra-moon'
 
 class Pokemon(pygame.sprite.Sprite):
     def __init__(self, name, level, nature, iv, ev, is_player):
@@ -30,15 +31,26 @@ class Pokemon(pygame.sprite.Sprite):
             "special-attack": 0,
             "special-defense": 0,
             "speed": 0}
+        self.x_pos, self.y_pos = 0, 0
+        self.size = 0
+        self.types = []
+        self.moves = []
+        self.image = None
+        self.status = '' # psn, par, slp, brn, frz | cfn, ifn
+        self.is_protected = False
+        self.priority = 0
 
         # set sprite position depending on if the Pokémon belongs to the player or opponent
         if is_player:
+            self.size = 500
             self.x_pos, self.y_pos = 100, 200
+            self._set_sprite('back_default')
         else:
-            self.x_pos, self.y_pos = 600, 600
+            self.size = 400
+            self.x_pos, self.y_pos = 800, 100
+            self._set_sprite('front_default')
 
         # set Pokémon's types
-        self.types = []
         for i in range(len(self.json['types'])):
             type = self.json['types'][i]
             self.types.append(type['type']['name'])
@@ -47,17 +59,10 @@ class Pokemon(pygame.sprite.Sprite):
         base_stats = self.json['stats']
         for stat in base_stats:
             self._set_stat(stat)
+        self.curr_hp = self.stats['hp']
             
         # set Pokémon's moves
-        self.moves = []
-        self._set_level_up_moves()    
-        
-        # set sprite info
-        self.size = 400
-        if is_player:
-            self._set_sprite('back_default')
-        else:
-            self._set_sprite('front_default')
+        self._set_level_up_moves()
     
     def _set_stat(self, stat):
         ev = self.ev
@@ -82,8 +87,8 @@ class Pokemon(pygame.sprite.Sprite):
             for j in range(len(versions)): # in each move, get the right details
                 game_ver = versions[j]
 
-                # only get moves from Platinum (TODO: to be changed by user)
-                if game_ver['version_group']['name'] != 'platinum':
+                # only get moves from a specific version
+                if game_ver['version_group']['name'] != VERSION:
                     continue
                 
                 # only add level-up moves (no TM moves, etc.)
@@ -94,12 +99,17 @@ class Pokemon(pygame.sprite.Sprite):
                 if self.level < game_ver['level_learned_at']:
                     continue
                 
-                possible_moves[Move(self.json['moves'][i]['move']['url'])] = game_ver['level_learned_at']
+                possible_moves[Move(self.json['moves'][i]['move']['name'], VERSION)] = game_ver['level_learned_at']
         
         possible_moves = sorted(possible_moves.items(), key=lambda x: x[1], reverse=True)
         
-        for i in range(4):
-            self.moves.append(possible_moves[i][0])  
+        if bool(possible_moves):
+            dummy_move = Move('struggle', VERSION)
+            self.moves = [dummy_move, dummy_move, dummy_move, dummy_move] # sanity check if there are no viable moves
+        else:
+            for i in range(4):
+                self.moves.append(possible_moves[i][0])
+
 
     def _set_sprite(self, direction):
         # set sprite
