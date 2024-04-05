@@ -17,10 +17,34 @@ class Referee():
     def calc_damage(self, attacking, defending, move):
         if defending.is_protected:
             return
+
+        # initialize which stats to use for damage calculation
+        A = attacking.stats['attack']
+        D = defending.stats['defense']
+
+        # physical move
+        if move.damage_class == 'physical':
+            if move.name == 'body-press':
+                A = D
+            if move.name == 'foul-play':
+                A = defending.stats['attack']
+                
+        # special move
+        elif move.damage_class == 'special':
+            A = attacking.stats['special-attack']
+            D = defending.stats['special-defense']
+            
+            if move.name == 'psyshock' or 'psystrike' or 'secret-sword':
+                D = defending.stats['defense']
+
+        # TODO: implement random and critical
+        random = 1.0
+        critical = 1.0
+        stab = 1.5 if move.type in attacking.types else 1.0
+        type = type_chart.loc[move.type, defending.types[0]] * type_chart.loc[move.type, defending.types[1]]
         
-        # calculate damage here
-        # TODO: type effectiveness, STAB,  etc.
-        damage = move.power
+        # damage calculation (TODO: include status conditions)
+        damage = ( (((2 * attacking.level / 5 + 2) * move.power * (A / D)) / 50) + 2 ) * critical * random * stab * type
         defending.curr_hp -= damage
         
         if defending.curr_hp < 0:
