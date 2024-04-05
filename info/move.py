@@ -21,7 +21,7 @@ class Move():
         req = requests.get(f'https://pokeapi.co/api/v2/move/{move_name}')
         self.json = req.json()
 
-        self.name = self.json['name']
+        self.name = self.json['meta']['name']
         self.power = self.json['power']
         self.accuracy = self.json['accuracy']
         self.type = self.json['type']['name']
